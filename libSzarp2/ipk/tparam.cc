@@ -124,16 +124,6 @@ TParam::AddDraw(TDraw * draw)
     return _draws->Append(draw);
 }
 
-TAnalysis* 
-TParam::AddAnalysis(TAnalysis* a)
-{
-	if (_analysis == NULL) {
-		_analysis = a;
-		return _analysis;
-	}
-	return _analysis->Append(a);
-}
-
 int TParam::parseXML(xmlTextReaderPtr reader)
 {
 	TValue* v = NULL;
@@ -298,13 +288,6 @@ int TParam::parseXML(xmlTextReaderPtr reader)
 				TDraw *d = TDraw::parseXML(reader);
 			if (d != NULL)
 				AddDraw(d);
-			}
-		} else
-		if (xw.IsTag("analysis")) {
-			if (xw.IsBeginTag()) {
-			TAnalysis* a = TAnalysis::parseXML(reader);
-			if (a != NULL)
-				AddAnalysis(a);
 			}
 		} else
 		if (xw.IsTag("define")) {
@@ -541,11 +524,6 @@ TParam::parseXML(xmlNodePtr node)
 	    if (d != NULL)
 		AddDraw(d);
 	}
-	else if (!strcmp((char *)ch->name, "analysis")) {
-	    TAnalysis* a = TAnalysis::parseXML(ch);
-	    if (a != NULL)
-		AddAnalysis(a);
-	}
     }
 
     if (!_values) {
@@ -777,14 +755,6 @@ TParam::generateXMLNode(void)
 	    xmlAddChild(r, i->GenerateXMLNode());
     }
     
-    if (_analysis) {
-	for (TAnalysis *i = _analysis; i; i = i->GetNext()) { 
-	    xmlNodePtr analisys_node = i->generateXMLNode();
-	    if (analisys_node)
-		    xmlAddChild(r, analisys_node);
-	}
-    }
-    
     return r;
 
 #undef X
@@ -1001,7 +971,6 @@ TParam::~TParam()
 	delete _raports;
 	delete _draws;
 	delete _values;
-	delete _analysis;
 
     xmlFree(_script);
 }
